@@ -1,1 +1,13 @@
 # NextWordPredictor
+
+This repository contains code to create a model which predicts the next word in a given string. Such a model is useful when one thinks of an intelligent keyboard for mobile devices, for example.
+
+The script contained in file `1_fromTextToNGramTable.R` generates n-gram tables from a text collection consisting of blog posts, news articles, and tweets. The text collection files (`en_US.blogs.txt`, `en_US.news.txt` and `en_US.twitter.txt`) are not given here, but can be obtained from https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip. The following parameters can be tweaked: if the whole text collection should be used or only a sample, the length of n-grams, the length of skipgrams, and if stopwords should be removed. If the whole text collection is used, it is first separated in a training set (80% of the original dataset), and the remaining 20% are kept as a test set. Any sample requested is taken from the training set. Profanity words are removed by standard; the file containing profanity words can be obtained from https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/blob/master/en (to facilitate processing, it is advisable to label it `en_badwords.txt`). The script returns separeted files giving frequencies of the n-grams/skipgrams requested.
+
+The script contained in file `2_fromNGramTableToCalcTable.R` processes the files generated from the first script, returning frequency tables fit to be used in the prediction model. Adjustable parameters are: the minimum frequency of an n-gram in each table (all those below the threshold are considered as non-existent and discarded), and if the tables should be pruned, keeping only a settable maximum number of occurrences for each history; a history is defined as the n-gram minus the last word. The following procedures are performed, in this order: the frequency tables are integrated so that repeated n-grams have their frequencies summed, low frequencies are discarded, n-grams are split into history and (last) word, and finally the tables are pruned.
+
+The script contained in file `3_calcProbFromMemory(KneserNey).R` builds and implements the prediction model. The approach used is that of the Backoff Model, where a matching n-gram is searched for the input string, from the top-level to the bottom-level n-gram tables available. The probability is calculated based on the Kneser-Key Smoothing Method.
+
+A working web app can be found at https://dennymc.shinyapps.io/NextWordPredictor/.
+
+A pitch presentation of the app is available at https://rpubs.com/dennymc/NextWordPredictor.
